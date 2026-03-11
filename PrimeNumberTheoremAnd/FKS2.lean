@@ -2144,62 +2144,42 @@ theorem corollary_8 {x₁ : ℝ} (hx₁ : x₁ ≥ 14)
       επ_num (fun j : Fin (i.val.val+1) ↦ (b' ⟨ j.val, by grind ⟩).toReal)
         εθ_num x₁ (exp (b' i.val).toReal)
         (if (i+1) = Fin.last M then ⊤ else exp (b' (i+1)).toReal)) := by
-  have hM_pos : 0 < M := by
-    by_contra h
-    have hM0 : M = 0 := by omega
-    have h1 : (Fin.last M) = (0 : Fin (M + 1)) := by
-      subst hM0
-      <;> simp [Fin.last]
-      <;> decide
-    have h2 : b' (0 : Fin (M + 1)) = ⊤ := by
-      rw [← h1, h_b_end]
-    have h3 : b' (0 : Fin (M + 1)) = (log x₁ : EReal) := by
-      exact_mod_cast h_b_start
-    rw [h3] at h2
-    simpa using h2
-  let i0 : Fin (M + 1) := 0
-  have h_i0_in_Iio : i0 ∈ Finset.Iio (Fin.last M) := by
-    simp [Finset.mem_Iio, Fin.lt_iff_val_lt_val, Fin.last, hM_pos]
-    <;> exact hM_pos
-  let i : Finset.Iio (Fin.last M) := ⟨i0, h_i0_in_Iio⟩
-  let x₀' : ℝ := x₁
-  let x₁' : ℝ := x₁
-  let x₂' : EReal := ⊤
-  let N_local : ℕ := 0
-  let b_local : Fin (N_local + 1) → ℝ := fun _ : Fin 1 => (b' 0).toReal
-  have hmono_local : Monotone b_local := by
-    intro j₁ j₂ _
-    simp [b_local]
-  have h_b_start_local : b_local 0 = log x₀' := by
-    simp [b_local, x₀', h_b_start]
-    <;> norm_cast
-  have h_b_end_local : b_local (Fin.last N_local) = log x₁' := by
-    simp [b_local, x₁', Fin.last, h_b_start]
-    <;> norm_cast
-  have h_x1'_ge : x₁' ≥ max x₀' 14 := by
-    simp [x₀', x₁', hx₁] <;> linarith
-  have h16 : x₁' ≤ x := by
-    simp [x₁'] <;> linarith
-  have h20 : (x : EReal) ≤ x₂' := by
-    simp [x₂'] <;> exact le_top
-  have h_main1 : Eπ x ≤ επ_num b_local εθ_num x₀' x₁' x₂' :=
-    theorem_6 x₂' h_x1'_ge b_local hmono_local h_b_start_local h_b_end_local εθ_num h_εθ_num x h16 h20
-  have h4 : επ_num b_local εθ_num x₀' x₁' x₂' = (fun i : Finset.Iio (Fin.last M) ↦
-        επ_num (fun j : Fin (i.val.val+1) ↦ (b' ⟨ j.val, by grind ⟩).toReal)
-          εθ_num x₁ (exp (b' i.val).toReal)
-          (if (i+1) = Fin.last M then ⊤ else exp (b' (i+1)).toReal)) i := by
-    simp [b_local, x₀', x₁', x₂', N_local, i, i0]
-    <;> rfl
-  have h_main2 : επ_num b_local εθ_num x₀' x₁' x₂' ≤ iSup (fun i : Finset.Iio (Fin.last M) ↦
-      επ_num (fun j : Fin (i.val.val+1) ↦ (b' ⟨ j.val, by grind ⟩).toReal)
-        εθ_num x₁ (exp (b' i.val).toReal)
-        (if (i+1) = Fin.last M then ⊤ else exp (b' (i+1)).toReal)) := by
-    rw [h4]
-    exact Finite.le_ciSup (f := fun i : Finset.Iio (Fin.last M) ↦
-        επ_num (fun j : Fin (i.val.val+1) ↦ (b' ⟨ j.val, by grind ⟩).toReal)
-          εθ_num x₁ (exp (b' i.val).toReal)
-          (if (i+1) = Fin.last M then ⊤ else exp (b' (i+1)).toReal)) i
-  exact le_trans h_main1 h_main2
+  have hx_pos : 0 < x := by linarith [show (0 : ℝ) < 14 by norm_num]
+  have hlogx : Real.log x ≥ Real.log x₁ := Real.log_le_log (by linarith) hx
+  let S : Finset (Fin (M + 1)) := Finset.univ.filter (fun j : Fin (M + 1) => b' j ≤ (Real.log x).toEReal)
+  have hS_nonempty : (0 : Fin (M + 1)) ∈ S := by
+    simp only [S, Finset.mem_filter, Finset.mem_univ, true_and]
+    rw [h_b_start]
+    exact_mod_cast hlogx
+  have h_exists_max : ∃ (i : Fin (M + 1)), i ∈ S ∧ ∀ (j : Fin (M + 1)), j ∈ S → j ≤ i := by
+    have h : ∃ (x : Fin (M + 1)), x ∈ S ∧ ∀ (x' : Fin (M + 1)), x' ∈ S → id x' ≤ id x :=
+      Finset.exists_max_image S id ⟨0, hS_nonempty⟩
+    rcases h with ⟨i, hiS, hmax⟩
+    refine ⟨i, hiS, fun j hj => ?_⟩
+    simpa using hmax j hj
+  rcases h_exists_max with ⟨i_max, hi_max_in_S, hi_max_is_max⟩
+  have h1 : b' i_max ≤ (Real.log x).toEReal := by
+    simp only [S, Finset.mem_filter] at hi_max_in_S
+    tauto
+  have h_i_max_not_last : i_max < Fin.last M := by
+    by_contra h_not_lt
+    have h_eq : i_max = Fin.last M := by exact Fin.eq_last_of_not_lt h_not_lt
+    rw [h_eq] at h1
+    rw [h_b_end] at h1
+    simp at h1
+    <;> tauto
+  have h2 : (Real.log x).toEReal ≤ b' (i_max + 1) := by
+    by_contra h_not_le
+    have h_contr : b' (i_max + 1) < (Real.log x).toEReal := by exact lt_of_not_ge h_not_le
+    have h_i_max_plus1_in_S : (i_max + 1) ∈ S := by
+      simp only [S, Finset.mem_filter, Finset.mem_univ, true_and]
+      exact le_of_lt h_contr
+    have h_i_max_plus1_le_i_max : i_max + 1 ≤ i_max := hi_max_is_max (i_max + 1) h_i_max_plus1_in_S
+    simp [Fin.ext_iff] at h_i_max_plus1_le_i_max
+    <;> omega
+  have h3 : b' i_max ≤ (Real.log x).toEReal := h1
+  have h4 : (Real.log x).toEReal ≤ b' (i_max + 1) := h2
+  sorry
 
 blueprint_comment /--
 \subsection{Putting everything together}
