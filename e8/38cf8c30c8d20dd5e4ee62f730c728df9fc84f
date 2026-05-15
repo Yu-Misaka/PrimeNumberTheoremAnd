@@ -1,0 +1,63 @@
+PrimeNumberTheoremAnd/BKLNW.lean
+  4a4f0925674eb188 1158-1250 gitai:{"mixed_line_ranges":[],"operations":[{"operation_id":"6a06d2dad8be16770ed5acb2","tool_type":"agent","tool_id":"SearchReplace","line_ranges":[{"Range":[1158,1250]}]}]}
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.3.4",
+  "base_commit_sha": "e838cf8c30c8d20dd5e4ee62f730c728df9fc84f",
+  "prompts": {
+    "4a4f0925674eb188": {
+      "agent_id": {
+        "tool": "trae",
+        "id": "6a0532fc849185f590f7809f",
+        "model": "Seed-Dogfooding-2.0__dev"
+      },
+      "human_author": "Yu-Misaka <109365723+Yu-Misaka@users.noreply.github.com>",
+      "messages": [],
+      "total_additions": 179,
+      "total_deletions": 87,
+      "accepted_lines": 93,
+      "overriden_lines": 0
+    }
+  },
+  "attestation_metadata": {
+    "PrimeNumberTheoremAnd/BKLNW.lean": [
+      {
+        "hash": "4a4f0925674eb188",
+        "line_ranges": [
+          {
+            "Range": [
+              1158,
+              1250
+            ]
+          }
+        ],
+        "mixed_line_ranges": [],
+        "operations": [
+          {
+            "operation_id": "6a06d2dad8be16770ed5acb2",
+            "tool_type": "agent",
+            "tool_id": "SearchReplace",
+            "line_ranges": [
+              {
+                "Range": [
+                  1158,
+                  1250
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "remote_transcripts": {
+    "4a4f0925674eb188": {
+      "tool": "trae",
+      "conversation_id": "6a0532fc849185f590f7809f",
+      "session_id": "6a0532fc849185f590f7809f",
+      "status": "remote_only",
+      "message": "Remote transcript resolution is not implemented yet for TRAE prompts."
+    }
+  }
+}
